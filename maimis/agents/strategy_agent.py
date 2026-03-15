@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal, StrategyPlan
 
 
 class StrategyAgent:
     name = "strategy"
+    prompt = get_prompt(name)
 
     def run(
         self,

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class BullResearcherAgent:
     name = "bull_researcher"
+    prompt = get_prompt("bull_researcher")
 
     def run(self, signals: list[AgentSignal]) -> AgentSignal:
         bullish_scores = [s.score for s in signals if s.direction == "bullish"]
@@ -19,12 +21,13 @@ class BullResearcherAgent:
             direction="bullish",
             score=float(probability),
             confidence=float(min(0.95, confidence)),
-            details={"bullish_probability": probability},
+            details={"bullish_probability": probability, "analysis_prompt": self.prompt},
         )
 
 
 class BearResearcherAgent:
     name = "bear_researcher"
+    prompt = get_prompt("bear_researcher")
 
     def run(self, signals: list[AgentSignal]) -> AgentSignal:
         bear_prob = 1 - (sum(s.score for s in signals if s.direction == "bullish") / max(len(signals), 1))
@@ -37,5 +40,5 @@ class BearResearcherAgent:
             direction="bearish",
             score=float(bear_prob),
             confidence=float(min(0.95, confidence)),
-            details={"bearish_probability": bear_prob},
+            details={"bearish_probability": bear_prob, "analysis_prompt": self.prompt},
         )

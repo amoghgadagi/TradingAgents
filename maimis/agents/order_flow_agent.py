@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
@@ -9,6 +10,7 @@ class OrderFlowAgent:
     """Approximates microstructure from candle-level proxy metrics (yfinance has no L2 book)."""
 
     name = "order_flow"
+    prompt = get_prompt(name)
 
     def run(self, ohlcv: pd.DataFrame) -> AgentSignal:
         recent = ohlcv.tail(40).copy()
@@ -34,6 +36,7 @@ class OrderFlowAgent:
             score=float(max(0.05, min(0.95, score))),
             confidence=float(confidence),
             details={
+                "analysis_prompt": self.prompt,
                 "imbalance": imbalance,
                 "pressure": pressure,
             },

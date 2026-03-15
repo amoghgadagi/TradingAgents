@@ -3,11 +3,13 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class ChartAnalysisAgent:
     name = "chart_analysis"
+    prompt = get_prompt(name)
 
     def run(self, ohlcv: pd.DataFrame) -> AgentSignal:
         close = ohlcv["Close"]
@@ -32,6 +34,7 @@ class ChartAnalysisAgent:
             score=float(score),
             confidence=float(confidence),
             details={
+                "analysis_prompt": self.prompt,
                 "support": rolling_low,
                 "resistance": rolling_high,
                 "breakout_probability": float(breakout_prob),

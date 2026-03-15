@@ -222,6 +222,7 @@ MAIMIS now mirrors the TradingAgents layout style with explicit layers:
   - analysts (`analysts/`), researchers (`researchers/`), managers (`managers/`), trader (`trader/`), risk management (`risk_mgmt/`)
 - `maimis/graph/trading_graph.py` for end-to-end execution flow
 - `maimis/reporting.py` for per-agent reports + final report generation
+- `maimis/agents/prompts.py` with hedge-fund style technical prompts per agent perspective (chart/volume/technical/order-flow/sentiment/macro/quant/research/strategy)
 
 Required APIs / keys:
 

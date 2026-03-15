@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class TechnicalIndicatorsAgent:
     name = "technical_indicators"
+    prompt = get_prompt(name)
 
     def run(self, ohlcv: pd.DataFrame) -> AgentSignal:
         close = ohlcv["Close"]
@@ -80,6 +82,7 @@ class TechnicalIndicatorsAgent:
             score=float(max(0.05, min(0.95, score))),
             confidence=float(min(0.95, confidence)),
             details={
+                "analysis_prompt": self.prompt,
                 "market_state": market_state,
                 "rsi": float(rsi),
                 "stoch_k": stoch_k,

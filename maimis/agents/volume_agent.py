@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class VolumeAnalysisAgent:
     name = "volume_analysis"
+    prompt = get_prompt(name)
 
     def run(self, ohlcv: pd.DataFrame) -> AgentSignal:
         volume = ohlcv["Volume"].tail(80)
@@ -35,6 +37,7 @@ class VolumeAnalysisAgent:
             score=float(max(0.05, min(0.95, score))),
             confidence=float(confidence),
             details={
+                "analysis_prompt": self.prompt,
                 "avg_volume": avg_volume,
                 "last_volume": last_volume,
                 "spike_ratio": spike_ratio,

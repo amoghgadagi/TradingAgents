@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class SentimentAgent:
     name = "sentiment"
+    prompt = get_prompt(name)
 
     POSITIVE = {
         "beat", "surge", "strong", "growth", "upgrade", "bullish", "rally", "record", "cooling inflation"
@@ -23,11 +25,15 @@ class SentimentAgent:
         if not headlines:
             return AgentSignal(
                 agent=self.name,
-                summary="No recent Yahoo headlines found; sentiment neutral by default.",
+                summary="No recent Yahoo/AV headlines found; sentiment neutral by default.",
                 direction="neutral",
                 score=0.5,
                 confidence=0.35,
-                details={"headlines": 0, "top_headlines": []},
+                details={
+                    "analysis_prompt": self.prompt,
+                    "headlines": 0,
+                    "top_headlines": [],
+                },
             )
 
         lower = [h.lower() for h in headlines]
@@ -42,11 +48,12 @@ class SentimentAgent:
 
         return AgentSignal(
             agent=self.name,
-            summary=f"Yahoo news sentiment from {len(headlines)} headlines: pos={pos}, neg={neg}, bias={direction}.",
+            summary=f"News sentiment from {len(headlines)} headlines: pos={pos}, neg={neg}, bias={direction}.",
             direction=direction,
             score=float(max(0.05, min(0.95, score))),
             confidence=float(confidence),
             details={
+                "analysis_prompt": self.prompt,
                 "positive_hits": pos,
                 "negative_hits": neg,
                 "headlines": len(headlines),

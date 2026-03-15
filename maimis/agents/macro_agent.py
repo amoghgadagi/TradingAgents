@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import math
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class MacroeconomicAgent:
     name = "macroeconomic"
+    prompt = get_prompt(name)
 
     def run(self, macro: dict[str, float]) -> AgentSignal:
         vix = macro.get("vix", float("nan"))
@@ -34,5 +36,10 @@ class MacroeconomicAgent:
             direction=direction,
             score=float(max(0.05, min(0.95, score))),
             confidence=float(min(0.9, confidence)),
-            details={"vix": safe_vix, "tnx": safe_tnx, "dxy": safe_dxy},
+            details={
+                "analysis_prompt": self.prompt,
+                "vix": safe_vix,
+                "tnx": safe_tnx,
+                "dxy": safe_dxy,
+            },
         )

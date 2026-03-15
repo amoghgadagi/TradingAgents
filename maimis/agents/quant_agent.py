@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pandas as pd
 
+from maimis.agents.prompts import get_prompt
 from maimis.models import AgentSignal
 
 
 class QuantAgent:
     name = "quantitative"
+    prompt = get_prompt(name)
 
     def run(self, ohlcv: pd.DataFrame) -> AgentSignal:
         close = ohlcv["Close"]
@@ -35,6 +37,7 @@ class QuantAgent:
             score=float(score),
             confidence=float(confidence),
             details={
+                "analysis_prompt": self.prompt,
                 "volatility": vol,
                 "momentum": momentum,
                 "mean_reversion_z": mean_reversion,
