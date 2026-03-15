@@ -35,6 +35,7 @@ dependencies = [
 
 [project.scripts]
 tradingagents = "cli.main:app"
+maimis = "maimis.main:app"
 
 [tool.setuptools.packages.find]
-include = ["tradingagents*", "cli*"]
+include = ["tradingagents*", "cli*", "maimis*"]

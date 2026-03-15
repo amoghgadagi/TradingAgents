@@ -158,6 +158,83 @@ An interface will appear showing results as they load, letting you track the age
   <img src="assets/cli/cli_transaction.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
+## MAIMIS Local App (MES via yfinance)
+
+A runnable MAIMIS reference app is included in this repo under `maimis/`. It mirrors the requested multi-agent intraday architecture using Yahoo Finance data (`yfinance`) so you can run it locally end-to-end.
+
+Run from source (ticker + days + interval):
+
+```bash
+python -m maimis.main run --symbol MES=F --days 30 --interval 1d --show-ohlcv
+```
+
+This uses Yahoo market pull behavior equivalent to:
+
+```python
+import yfinance as yf
+mes_data = yf.download("MES=F", period="1mo", interval="1d")
+print(mes_data.head())
+```
+
+JSON output mode:
+
+```bash
+python -m maimis.main run --symbol MES=F --days 30 --interval 1d --as-json
+```
+
+MAIMIS writes a Markdown report on every run (default: `outputs/maimis_report_<timestamp>.md`) and can optionally export OHLCV CSV.
+
+```bash
+python -m maimis.main run --symbol MES=F --days 30 --interval 1d --save-ohlcv-csv outputs/mes_ohlcv.csv
+```
+
+Historical cutoff example (up to Mar 15, 2026) with strict live requirement:
+
+```bash
+python -m maimis.main run --symbol MES=F --days 30 --interval 1d --end-date 2026-03-15T23:59:00 --require-live
+```
+
+```bash
+python -m maimis.main run --symbol MES=F --days 30 --interval 1d --print-report
+```
+
+Agents implemented:
+- chart analysis
+- volume analysis
+- technical indicators
+- order flow (OHLCV proxy)
+- sentiment (Yahoo Finance news headlines)
+- macro (VIX/TNX/DXY proxies)
+- numerical/quant
+- debate validator
+- bull/bear researchers
+- strategy agent
+
+### MAIMIS Architecture and Folder Structure (TradingAgents-style)
+
+MAIMIS now mirrors the TradingAgents layout style with explicit layers:
+
+- `maimis/dataflows/`
+  - `alpha_vantage_stock.py`, `alpha_vantage_news.py`, `alpha_vantage_common.py`
+  - `yfinance_market.py`, `yfinance_news.py`
+  - `market_data.py` (Alpha Vantage primary, Yahoo fallback)
+- `maimis/agents/`
+  - analysts (`analysts/`), researchers (`researchers/`), managers (`managers/`), trader (`trader/`), risk management (`risk_mgmt/`)
+- `maimis/graph/trading_graph.py` for end-to-end execution flow
+- `maimis/reporting.py` for per-agent reports + final report generation
+
+Required APIs / keys:
+
+```bash
+export ALPHA_VANTAGE_API_KEY=...   # primary market/news source
+```
+
+LLMs can remain local (e.g., Ollama) for any future reasoning extension; current MAIMIS pipeline runs deterministic numeric/news analysis without requiring paid LLM calls.
+
+## Project Planning Template
+
+For teams adapting this framework to a specific instrument/workflow, see the hedge-fund style charter template: [`docs/maimis_project_charter.md`](docs/maimis_project_charter.md).
+
 ## TradingAgents Package
 
 ### Implementation Details
